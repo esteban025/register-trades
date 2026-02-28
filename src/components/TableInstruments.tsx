@@ -1,36 +1,29 @@
 import type { Instrument } from "@/types/instruments";
-import { actions } from "astro:actions";
-import { useEffect, useState } from "react";
+import { useStore } from "@nanostores/react";
+import { instrumentsStore, instrumentsLoading, refreshInstruments } from "@/store";
+import { useEffect } from "react";
 
 const headerTable = ["Nombre", "Pip/Valor", "Acciones"];
 
 export const TableInstruments = () => {
-  const [instruments, setInstruments] = useState<Instrument[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const instruments = useStore(instrumentsStore);
+  const loading = useStore(instrumentsLoading);
+  const formatedNumber = (number: number) => {
+    if (number == null || isNaN(number)) return "0.00";
+    return Number(number).toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
   useEffect(() => {
-    const fetchInstruments = async () => {
-      try {
-        const { data, error } = await actions.getInstruments({})
-        if (!data?.success || error) {
-          setError(data?.message || error?.message || "Error fetching instruments");
-          return;
-        }
-        setInstruments(data.instruments);
-      } catch (error) {
-        setError("Error fetching instruments");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchInstruments();
-  }, [])
+    refreshInstruments();
+  }, []);
+
   return (
     <div className="ss">
       {loading && <p>Cargando...</p>}
-      {error && <p>{error}</p>}
-      {!loading && !error && (
+      {!loading && (
         <div className="container-table">
           <table>
             <thead>
@@ -41,10 +34,10 @@ export const TableInstruments = () => {
               </tr>
             </thead>
             <tbody>
-              {instruments.map((instrument) => (
+              {instruments.map((instrument: Instrument) => (
                 <tr key={instrument.id}>
                   <td>{instrument.name}</td>
-                  <td>{instrument.pip_value}</td>
+                  <td>{formatedNumber(instrument.pip_value)}</td>
                   <td>
                     {/* Aquí puedes agregar botones de acción, como editar o eliminar */}
                   </td>
@@ -55,5 +48,5 @@ export const TableInstruments = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
