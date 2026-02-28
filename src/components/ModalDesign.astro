@@ -1,0 +1,31 @@
+---
+const { idModal, titleModal } = Astro.props;
+---
+
+<div
+  id={idModal}
+  class="modal fixed inset-0 bg-white/10 backdrop-blur-md hidden justify-center items-center"
+>
+  <div
+    class="modal-content bg-neutral-900 border border-neutral-700 rounded-2xl shadow-2xl w-full max-w-150"
+  >
+    <header
+      class="p-3 border-b border-neutral-700 flex items-center justify-between"
+    >
+      <h2 class="text-xl font-semibold">{titleModal}</h2>
+      <span class="text-neutral-400">ESC</span>
+    </header>
+    <div class="body-modal">
+      <slot name="body-modal" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal.hidden {
+    display: none;
+  }
+  .modal.is-active {
+    display: flex;
+  }
+</style>

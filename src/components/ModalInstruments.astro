@@ -1,0 +1,76 @@
+---
+import { actions } from "astro:actions";
+import ModalDesign from "./ModalDesign.astro";
+---
+
+<ModalDesign idModal="modal-instrument" titleModal="Nuevo Activo">
+  <div class="" slot="body-modal">
+    <form id="form-instrument" action={actions.createInstrument} class="form">
+      <div class="container-contents">
+        <div class="content-input">
+          <input
+            type="text"
+            name="name-instrument"
+            id="name-instrument"
+            style="text-transform: uppercase;"
+            placeholder=" "
+            autocomplete="off"
+          />
+          <label for="name-instrument">Nombre del activo</label>
+        </div>
+        <div class="content-input">
+          <!-- valor con decimales por ejemplo 0.01 -->
+          <input
+            type="number"
+            name="value-instrument"
+            id="value-instrument"
+            step="0.01"
+            placeholder=" "
+          />
+          <label for="value-instrument">Valor del activo</label>
+        </div>
+      </div>
+      <div class="content-btns">
+        <button
+          type="reset"
+          class="btn btn-secondary"
+          data-close="modal-instrument">Cancelar</button
+        >
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</ModalDesign>
+
+<script>
+  import { setupModalCloseHandlers } from "@/scripts/modalClose";
+  import { $id } from "@/utils/getElementsDom";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const modalInstrument = $id("modal-instrument");
+    const form = $id("form-instrument") as HTMLFormElement;
+
+    function openModalInstrument() {
+      modalInstrument?.classList.remove("hidden");
+      modalInstrument?.classList.add("is-active");
+    }
+
+    function closeModalInstrument() {
+      modalInstrument?.classList.remove("is-active");
+      modalInstrument?.classList.add("hidden");
+    }
+
+    // datos de formulario
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const name = (formData.get("name-instrument") as string).toUpperCase();
+      const value = parseFloat(formData.get("value-instrument") as string);
+
+      console.log("Datos del formulario:", { name, value });
+    });
+
+    setupModalCloseHandlers("modal-instrument", closeModalInstrument);
+    (window as any).openModalInstrument = openModalInstrument;
+  });
+</script>

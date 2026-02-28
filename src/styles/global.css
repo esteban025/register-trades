@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "./buttons.css";
+@import "./forms.css";
+
+/* Supports weights 200-800 */
+@import '@fontsource-variable/manrope';
+
+@layer base {
+  :root {
+    --font-manrope: 'Manrope Variable', sans-serif;
+    --color-primary: var(--color-sky-700);
+    --color-secondary: var(--color-gray-600);
+    --color-bordes: var(--color-neutral-700);
+  }
+}
+
+body {
+  font-family: var(--font-manrope);
+}

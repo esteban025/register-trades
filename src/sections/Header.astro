@@ -1,0 +1,33 @@
+---
+import { PlusIcon } from "@/assets/icons/icons";
+---
+
+<header class="flex items-center justify-between">
+  <div class="logo">
+    <span>Register trades</span>
+  </div>
+  <nav>
+    <ul class="flex items-center gap-4">
+      <button class="btn btn-secondary btn-actives">
+        <PlusIcon className="block size-6" />
+        <span>Activos</span>
+      </button>
+      <button class="btn btn-primary">
+        <PlusIcon className="block size-6" />
+        <span>Trades</span>
+      </button>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import { $ } from "@/utils/getElementsDom";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnOpenModalInstrument = $(".btn-actives") as HTMLButtonElement;
+
+    btnOpenModalInstrument?.addEventListener("click", () => {
+      (window as any).openModalInstrument();
+    });
+  });
+</script>

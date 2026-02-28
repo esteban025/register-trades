@@ -1,0 +1,122 @@
+---
+interface Props {
+  id?: string;
+}
+
+const { id = "notification" } = Astro.props;
+---
+
+<div
+  id={id}
+  class="notification-container fixed top-4 right-4 z-50 hidden transition-all duration-300"
+>
+  <div
+    class="notification-content bg-white border-2 border-gray-300 rounded-full px-6 py-4 shadow-lg min-w-75 max-w-100"
+  >
+    <p class="notification-message text-sm font-medium text-gray-800"></p>
+  </div>
+</div>
+
+<style>
+  /* modatrar ocultar */
+  .notification-container.show {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .notification-container.hide {
+    animation: slideOut 0.3s ease-out;
+  }
+
+  /* notificacion exitosa */
+  .notification-container.success {
+    .notification-content {
+      background-color: #f9fafb;
+      border-color: #6b7280;
+    }
+    .notification-message {
+      color: #1f2937;
+    }
+  }
+
+  /* notificacion de error */
+  .notification-container.error {
+    .notification-content {
+      background-color: #fef2f2;
+      border-color: #dc2626;
+    }
+    .notification-message {
+      color: #991b1b;
+    }
+  }
+
+  /* notificacion de informacion */
+  .notification-container.info {
+    .notification-content {
+      background-color: #f3f4f6;
+      border-color: #9ca3af;
+    }
+    .notification-message {
+      color: #374151;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  import { $, $id } from "@/utils/getElementsDom";
+  function showNotification(
+    message: string,
+    type: "success" | "error" | "info" = "info",
+    duration: number = 4000,
+  ) {
+    const notification = $id("notification") as HTMLDivElement;
+    const messageElement = $(".notification-message") as HTMLParagraphElement;
+
+    if (!notification || !messageElement) return;
+
+    // Limpiar clases anteriores
+    notification.classList.remove("success", "error", "info", "hide");
+
+    // Establecer mensaje y tipo
+    messageElement.textContent = message;
+    notification.classList.add(type);
+
+    // Mostrar notificación
+    notification.classList.remove("hidden");
+    notification.classList.add("show");
+
+    // Ocultar después de la duración especificada
+    setTimeout(() => {
+      notification.classList.add("hide");
+      setTimeout(() => {
+        notification.classList.remove("show", "hide");
+        notification.classList.add("hidden");
+      }, 300);
+    }, duration);
+  }
+
+  // Hacer la función disponible globalmente
+  (window as any).showNotification = showNotification;
+</script>
