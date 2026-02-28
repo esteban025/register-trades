@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import ModalInstruments from "@/components/ModalInstruments.astro";
+import Notification from "@/assets/Notification.astro";
 const { title, description } = Astro.props;
 ---
 
@@ -15,6 +16,7 @@ const { title, description } = Astro.props;
 		<meta name="description" content={description} />
 	</head>
 	<body class="bg-neutral-950 text-neutral-50 p-4 px-8 relative">
+		<Notification />
 		<ModalInstruments />
 		<slot />
 	</body>

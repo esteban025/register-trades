@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "./buttons.css";
 @import "./forms.css";
+@import "./sections.css";
+@import "./tables.css";
 
 /* Supports weights 200-800 */
 @import '@fontsource-variable/manrope';

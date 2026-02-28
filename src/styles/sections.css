@@ -1,0 +1,13 @@
+.section-design {
+  border: 1px solid var(--color-bordes);
+  background-color: var(--color-neutral-900);
+  border-radius: 1rem;
+  padding: 1rem;
+
+  & header{
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+  }
+}

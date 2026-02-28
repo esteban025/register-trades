@@ -44,33 +44,69 @@ import ModalDesign from "./ModalDesign.astro";
 
 <script>
   import { setupModalCloseHandlers } from "@/scripts/modalClose";
+  import { isModalInstrumentOpen, showNotification } from "@/store";
   import { $id } from "@/utils/getElementsDom";
+  import { actions } from "astro:actions";
 
   document.addEventListener("DOMContentLoaded", () => {
     const modalInstrument = $id("modal-instrument");
     const form = $id("form-instrument") as HTMLFormElement;
 
-    function openModalInstrument() {
-      modalInstrument?.classList.remove("hidden");
-      modalInstrument?.classList.add("is-active");
-    }
+    isModalInstrumentOpen.subscribe((isOpen) => {
+      if (isOpen) {
+        modalInstrument?.classList.add("is-active");
+        modalInstrument?.classList.remove("hidden");
+      } else {
+        closeModalInstrument();
+      }
+    });
 
     function closeModalInstrument() {
+      form.reset();
       modalInstrument?.classList.remove("is-active");
       modalInstrument?.classList.add("hidden");
+      isModalInstrumentOpen.set(false);
     }
 
     // datos de formulario
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
       const name = (formData.get("name-instrument") as string).toUpperCase();
-      const value = parseFloat(formData.get("value-instrument") as string);
+      const pip_value = parseFloat(formData.get("value-instrument") as string);
 
-      console.log("Datos del formulario:", { name, value });
+      if (!name || isNaN(pip_value)) {
+        showNotification(
+          "Por favor completa todos los campos correctamente",
+          "error",
+        );
+        return;
+      }
+
+      try {
+        const { data, error } = await actions.createInstrument({
+          name,
+          pip_value,
+        });
+
+        if (error || !data.success) {
+          showNotification(
+            error?.message || data?.message || "Error al crear el activo",
+            "error",
+          );
+        } else {
+          showNotification(
+            data.message || "Activo creado exitosamente",
+            "success",
+          );
+          closeModalInstrument();
+        }
+      } catch (err) {
+        showNotification("Error inesperado al crear el activo", "error");
+        console.error(err);
+      }
     });
 
     setupModalCloseHandlers("modal-instrument", closeModalInstrument);
-    (window as any).openModalInstrument = openModalInstrument;
   });
 </script>

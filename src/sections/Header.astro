@@ -21,13 +21,14 @@ import { PlusIcon } from "@/assets/icons/icons";
 </header>
 
 <script>
+  import { isModalInstrumentOpen } from "@/store";
   import { $ } from "@/utils/getElementsDom";
 
   document.addEventListener("DOMContentLoaded", () => {
     const btnOpenModalInstrument = $(".btn-actives") as HTMLButtonElement;
 
     btnOpenModalInstrument?.addEventListener("click", () => {
-      (window as any).openModalInstrument();
+      isModalInstrumentOpen.set(true);
     });
   });
 </script>

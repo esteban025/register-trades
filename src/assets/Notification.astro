@@ -85,38 +85,35 @@ const { id = "notification" } = Astro.props;
 </style>
 
 <script>
+  import { notificationStore } from "@/store";
   import { $, $id } from "@/utils/getElementsDom";
-  function showNotification(
-    message: string,
-    type: "success" | "error" | "info" = "info",
-    duration: number = 4000,
-  ) {
+
+  document.addEventListener("DOMContentLoaded", () => {
     const notification = $id("notification") as HTMLDivElement;
     const messageElement = $(".notification-message") as HTMLParagraphElement;
 
     if (!notification || !messageElement) return;
 
-    // Limpiar clases anteriores
-    notification.classList.remove("success", "error", "info", "hide");
+    notificationStore.subscribe((state) => {
+      // Limpiar clases anteriores
+      notification.classList.remove("success", "error", "info", "hide");
 
-    // Establecer mensaje y tipo
-    messageElement.textContent = message;
-    notification.classList.add(type);
+      if (state.isVisible) {
+        // Establecer mensaje y tipo
+        messageElement.textContent = state.message;
+        notification.classList.add(state.type);
 
-    // Mostrar notificación
-    notification.classList.remove("hidden");
-    notification.classList.add("show");
-
-    // Ocultar después de la duración especificada
-    setTimeout(() => {
-      notification.classList.add("hide");
-      setTimeout(() => {
-        notification.classList.remove("show", "hide");
-        notification.classList.add("hidden");
-      }, 300);
-    }, duration);
-  }
-
-  // Hacer la función disponible globalmente
-  (window as any).showNotification = showNotification;
+        // Mostrar notificación
+        notification.classList.remove("hidden");
+        notification.classList.add("show");
+      } else {
+        // Ocultar con animación
+        notification.classList.add("hide");
+        setTimeout(() => {
+          notification.classList.remove("show", "hide");
+          notification.classList.add("hidden");
+        }, 300);
+      }
+    });
+  });
 </script>
