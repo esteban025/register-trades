@@ -1,10 +1,28 @@
 ---
 import { TableInstruments } from "@/components/TableInstruments";
+import { PlusIcon } from "@/assets/icons/icons";
 ---
 
 <section class="section-design">
-  <header>
+  <header class="flex items-center justify-between gap-2">
     <h2>Activos</h2>
+    <button class="btn btn-secondary btn-instruments">
+      <PlusIcon className="block size-6" />
+      <span>Activos</span>
+    </button>
   </header>
   <TableInstruments client:load />
 </section>
+
+<script>
+  import { isModalInstrumentOpen } from "@/store";
+  import { $ } from "@/utils/getElementsDom";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnOpenModalInstrument = $(".btn-instruments") as HTMLButtonElement;
+
+    btnOpenModalInstrument?.addEventListener("click", () => {
+      isModalInstrumentOpen.set(true);
+    });
+  });
+</script>

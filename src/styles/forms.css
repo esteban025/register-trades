@@ -1,5 +1,5 @@
 .form {
-  .container-contents {
+  .body-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;

@@ -2,6 +2,8 @@
 import "../styles/global.css";
 import ModalInstruments from "@/components/ModalInstruments.astro";
 import Notification from "@/assets/Notification.astro";
+import ModalTrades from "@/components/ModalTrades.astro";
+import ModalAccounts from "@/components/ModalAccounts.astro";
 const { title, description } = Astro.props;
 ---
 
@@ -18,6 +20,8 @@ const { title, description } = Astro.props;
 	<body class="bg-neutral-950 text-neutral-50 p-4 px-8 relative">
 		<Notification />
 		<ModalInstruments />
+		<ModalTrades />
+		<ModalAccounts />
 		<slot />
 	</body>
 </html>

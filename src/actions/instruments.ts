@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import type { Instrument } from "@/types/instruments";
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
@@ -6,11 +7,11 @@ export const getInstruments = defineAction({
   async handler() {
     const query = `SELECT * FROM instruments`;
     const [res] = await db.query(query);
-    const instruments = res as any[];
+    const data = res as Instrument[];
     return {
       success: true,
       message: "Instrumentos obtenidos exitosamente",
-      instruments,
+      data
     };
   }
 })

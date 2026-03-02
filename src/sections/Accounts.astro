@@ -1,0 +1,27 @@
+---
+import { PlusIcon } from "@/assets/icons/icons";
+import { TableAccounts } from "@/components/TableAccounts";
+---
+
+<section class="section-design">
+  <header class="flex items-center justify-between gap-2">
+    <h2>Cuentas</h2>
+    <button class="btn btn-secondary btn-accounts">
+      <PlusIcon className="block size-6" />
+      <span>Cuenta</span>
+    </button>
+  </header>
+  <TableAccounts client:load />
+</section>
+
+<script>
+  import { isModalAccountOpen } from "@/store";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnOpenModal = document.querySelector(".btn-accounts");
+
+    btnOpenModal?.addEventListener("click", () => {
+      isModalAccountOpen.set(true);
+    });
+  });
+</script>

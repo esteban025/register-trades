@@ -1,0 +1,132 @@
+---
+import { actions } from "astro:actions";
+import ModalDesign from "./ModalDesign.astro";
+---
+
+<ModalDesign idModal="modal-accounts" titleModal="Registrar cuenta">
+  <div class="ss" slot="body-modal">
+    <form id="form-accounts" action={actions.createAccount} class="form">
+      <div class="body-form">
+        <div class="content-input">
+          <input
+            type="text"
+            name="name-account"
+            id="name-account"
+            placeholder=" "
+            autocomplete="off"
+            required
+          />
+          <label for="name-account">Nombre</label>
+        </div>
+        <div class="content-input">
+          <!-- 67,76 -->
+          <input
+            type="number"
+            name="capital"
+            id="capital"
+            placeholder=" "
+            step="0.01"
+          />
+          <label for="capital">Monto Inicial</label>
+        </div>
+        <div class="content-input">
+          <input
+            type="text"
+            name="badge"
+            id="badge"
+            placeholder=" "
+            autocomplete="off"
+            style="text-transform: uppercase;"
+          />
+          <label for="badge">Divisa</label>
+        </div>
+      </div>
+      <div class="content-btns">
+        <button
+          type="reset"
+          class="btn btn-secondary"
+          data-close="modal-accounts">Cancelar</button
+        >
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</ModalDesign>
+
+<script>
+  import { setupModalCloseHandlers } from "@/scripts/modalClose";
+  import {
+    isModalAccountOpen,
+    showNotification,
+    refreshAccounts,
+  } from "@/store";
+  import { $id } from "@/utils/getElementsDom";
+  import { actions } from "astro:actions";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const modalAccount = $id("modal-accounts");
+    const form = $id("form-accounts") as HTMLFormElement;
+
+    isModalAccountOpen.subscribe((isOpen) => {
+      if (isOpen) {
+        modalAccount?.classList.add("is-active");
+        modalAccount?.classList.remove("hidden");
+      } else {
+        closeModalAccount();
+      }
+    });
+
+    function closeModalAccount() {
+      form.reset();
+      modalAccount?.classList.remove("is-active");
+      modalAccount?.classList.add("hidden");
+      isModalAccountOpen.set(false);
+    }
+
+    // datos de formulario
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const name = (formData.get("name-account") as string)?.trim();
+      const initial_capital = parseFloat(formData.get("capital") as string);
+      const badge =
+        (formData.get("badge") as string)?.trim().toUpperCase() || "USD";
+
+      if (!name || isNaN(initial_capital) || initial_capital <= 0) {
+        showNotification(
+          "Por favor completa todos los campos correctamente",
+          "error",
+        );
+        return;
+      }
+
+      try {
+        const { data, error } = await actions.createAccount({
+          name,
+          initial_capital,
+          badge,
+        });
+
+        if (error || !data.success) {
+          showNotification(
+            error?.message || data?.message || "Error al crear la cuenta",
+            "error",
+          );
+        } else {
+          showNotification(
+            data.message || "Cuenta creada exitosamente",
+            "success",
+          );
+          // Refrescar la lista de cuentas
+          await refreshAccounts();
+          closeModalAccount();
+        }
+      } catch (err) {
+        showNotification("Error inesperado al crear la cuenta", "error");
+        console.error(err);
+      }
+    });
+
+    setupModalCloseHandlers("modal-accounts", closeModalAccount);
+  });
+</script>

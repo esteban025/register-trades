@@ -2,12 +2,15 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/sections/Header.astro";
 import Instruments from "@/sections/Instruments.astro";
+import Trades from "@/sections/Trades.astro";
+import Accounts from "@/sections/Accounts.astro";
 ---
 
 <Layout>
 	<Header />
 	<main class="grid grid-cols-[1fr_2fr] gap-4">
 		<Instruments />
-		<section>Operaciones</section>
+		<Trades />
+		<Accounts />
 	</main>
 </Layout>

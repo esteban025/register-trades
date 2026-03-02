@@ -1,0 +1,28 @@
+---
+import { TableTrades } from "@/components/TableTrades";
+import { PlusIcon } from "@/assets/icons/icons";
+---
+
+<section class="section-design">
+  <header class="flex items-center justify-between gap-2">
+    <h2>Trades</h2>
+    <button class="btn btn-primary btn-trades">
+      <PlusIcon className="block size-6" />
+      <span>Trades</span>
+    </button>
+  </header>
+  <TableTrades client:load />
+</section>
+
+<script>
+  import { isModalTradeOpen } from "@/store";
+  import { $ } from "@/utils/getElementsDom";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnOpenModalTrades = $(".btn-trades") as HTMLButtonElement;
+
+    btnOpenModalTrades?.addEventListener("click", () => {
+      isModalTradeOpen.set(true);
+    });
+  });
+</script>
