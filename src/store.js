@@ -20,6 +20,10 @@ export const instrumentsLoading = atom(false);
 export const accountsStore = atom([]);
 export const accountsLoading = atom(false);
 
+// Trades store
+export const tradesStore = atom([]);
+export const tradesLoading = atom(false);
+
 // Helper para mostrar notificación
 export function showNotification(message, type = "info", duration = 4000) {
   notificationStore.set({ isVisible: true, message, type });
@@ -64,5 +68,24 @@ export async function refreshAccounts() {
     accountsStore.set([]);
   } finally {
     accountsLoading.set(false);
+  }
+}
+
+// Función para refrescar trades
+export async function refreshTrades() {
+  tradesLoading.set(true);
+  try {
+    const { data, error } = await actions.getTrades();
+    if (data?.success && data.data) {
+      tradesStore.set(data.data);
+    } else {
+      console.error("Error fetching trades:", error?.message || data?.message);
+      tradesStore.set([]);
+    }
+  } catch (err) {
+    console.error("Error refreshing trades:", err);
+    tradesStore.set([]);
+  } finally {
+    tradesLoading.set(false);
   }
 }

@@ -1,17 +1,17 @@
 ---
 import { PlusIcon } from "@/assets/icons/icons";
-import { TableAccounts } from "@/components/TableAccounts";
+import { CardsAccounts } from "@/components/CardsAccounts";
 ---
 
-<section class="section-design">
-  <header class="flex items-center justify-between gap-2">
-    <h2>Cuentas</h2>
-    <button class="btn btn-secondary btn-accounts">
-      <PlusIcon className="block size-6" />
+<section class="flex flex-col gap-8">
+  <header class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold">Cuentas</h2>
+    <button class="btn btn-primary btn-accounts">
+      <PlusIcon />
       <span>Cuenta</span>
     </button>
   </header>
-  <TableAccounts client:load />
+  <CardsAccounts client:load />
 </section>
 
 <script>

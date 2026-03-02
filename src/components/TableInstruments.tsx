@@ -30,9 +30,9 @@ export const TableInstruments = () => {
             <tbody>
               {instruments.map((instrument: Instrument) => (
                 <tr key={instrument.id}>
-                  <td>{instrument.name}</td>
-                  <td>{formatedNumber(instrument.pip_value)}</td>
-                  <td>
+                  <td className="col-full">{instrument.name}</td>
+                  <td className="min">{formatedNumber(instrument.pip_value)}</td>
+                  <td className="min">
                     {/* Aquí puedes agregar botones de acción, como editar o eliminar */}
                   </td>
                 </tr>

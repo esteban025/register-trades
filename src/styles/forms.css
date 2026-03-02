@@ -7,7 +7,7 @@
 
     .content-input {
       position: relative;
-      input{
+      input, textarea, select{
         width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--color-bordes);
@@ -23,6 +23,36 @@
             background-color: var(--color-neutral-900);
           }
         }
+      }
+
+      textarea {
+        min-height: 100px;
+        border-radius: 1.25rem;
+      }
+
+      select, ::picker(select) {
+        appearance: base-select;
+
+        &::picker-icon {
+          display: none;
+        }
+      }
+
+      select {
+        option {
+          background-color: #ffffff21;
+          border-radius: 999px;
+          padding: .5rem .25rem;
+        }
+      }
+
+      /* lienzo de opciones */
+      ::picker(select) {
+        background-color: var(--color-neutral-800);
+        color: var(--color-neutral-50);
+        border: 1px solid var(--color-bordes);
+        border-radius: 1rem;
+        padding: .5rem;
       }
       label{
         color: var(--color-bordes);

@@ -1,11 +1,203 @@
 ---
+import TypeTrade from "./formTrade/TypeTrade.astro";
 import ModalDesign from "./ModalDesign.astro";
+import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
 ---
 
 <ModalDesign idModal="modal-trade" titleModal="Registrar operación">
   <div class="" slot="body-modal">
-    <p>Formulario para registrar una operación</p>
+    <form id="form-trade" class="form">
+      <div class="body-form">
+        <!-- tipo -->
+        <TypeTrade />
+        <AccountsInstrumentsForm client:visible />
+        <div class="flex items-center gap-4">
+          <!-- fecha -->
+          <div class="content-input w-full">
+            <input type="date" name="entry-date" id="entry-date" />
+            <label for="entry-date">Fecha de entrada</label>
+          </div>
+          <!-- lotaje -->
+          <div class="content-input w-full">
+            <input
+              type="number"
+              name="lotage"
+              id="lotage"
+              placeholder=" "
+              step="0.01"
+            />
+            <label for="lotage">Lotaje</label>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <!-- precio de entrada -->
+          <div class="content-input w-full">
+            <input
+              type="number"
+              name="entry-price"
+              id="entry-price"
+              placeholder=" "
+              step="0.01"
+            />
+            <label for="entry-price">Precio de entrada</label>
+          </div>
+          <!-- precio de salida -->
+          <div class="content-input w-full">
+            <input
+              type="number"
+              name="exit-price"
+              id="exit-price"
+              placeholder=" "
+              step="0.01"
+            />
+            <label for="exit-price">Precio de salida</label>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <!-- swap -->
+          <div class="content-input w-full">
+            <input
+              type="number"
+              name="swap"
+              id="swap"
+              placeholder=" "
+              step="0.01"
+            />
+            <label for="swap">Swap</label>
+          </div>
+          <!-- rollover -->
+          <div class="content-input w-full">
+            <input
+              type="number"
+              name="rollover"
+              id="rollover"
+              placeholder=" "
+              step="0.01"
+            />
+            <label for="rollover">Rollover</label>
+          </div>
+        </div>
+
+        <!-- comentario -->
+        <div class="content-input w-full">
+          <textarea name="comentario" id="comentario" placeholder=" "
+          ></textarea>
+          <label for="comentario">Comentario</label>
+        </div>
+
+        <div class="content-btns">
+          <button
+            type="reset"
+            class="btn btn-secondary"
+            data-close="modal-trade">Cancelar</button
+          >
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      import { setupModalCloseHandlers } from "@/scripts/modalClose";
+      import {
+        isModalTradeOpen,
+        showNotification,
+        refreshTrades,
+      } from "@/store";
+      import { $id } from "@/utils/getElementsDom";
+      import { actions } from "astro:actions";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const modalTrade = $id("modal-trade");
+        const form = $id("form-trade") as HTMLFormElement;
+
+        isModalTradeOpen.subscribe((isOpen) => {
+          if (isOpen) {
+            modalTrade?.classList.add("is-active");
+            modalTrade?.classList.remove("hidden");
+          } else {
+            closeModalTrade();
+          }
+        });
+
+        function closeModalTrade() {
+          form?.reset();
+          modalTrade?.classList.remove("is-active");
+          modalTrade?.classList.add("hidden");
+          isModalTradeOpen.set(false);
+        }
+
+        // datos de formulario
+        form?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(form);
+
+          const account_id = parseInt(formData.get("account-id") as string);
+          const instrument_id = parseInt(
+            formData.get("instrument-id") as string,
+          );
+          const date = formData.get("entry-date") as string;
+          const type = formData.get("type") as "compra" | "venta";
+          const lotage = parseFloat(formData.get("lotage") as string);
+          const entry_price = parseFloat(formData.get("entry-price") as string);
+          const exit_price = parseFloat(formData.get("exit-price") as string);
+          const swap = parseFloat(formData.get("swap") as string) || 0;
+          const rollover = parseFloat(formData.get("rollover") as string) || 0;
+          const comentario = (formData.get("comentario") as string) || "";
+
+          if (
+            !account_id ||
+            !instrument_id ||
+            !date ||
+            !type ||
+            isNaN(lotage) ||
+            isNaN(entry_price) ||
+            isNaN(exit_price)
+          ) {
+            showNotification(
+              "Por favor completa todos los campos requeridos",
+              "error",
+            );
+            return;
+          }
+
+          try {
+            const { data, error } = await actions.createTrade({
+              account_id,
+              instrument_id,
+              date,
+              type,
+              lotage,
+              entry_price,
+              exit_price,
+              swap,
+              rollover,
+              comentario,
+            });
+
+            if (error || !data?.success) {
+              showNotification(
+                error?.message ||
+                  data?.message ||
+                  "Error al crear la operación",
+                "error",
+              );
+            } else {
+              showNotification(
+                data.message || "Operación registrada exitosamente",
+                "success",
+              );
+              await refreshTrades();
+              closeModalTrade();
+            }
+          } catch (err) {
+            showNotification("Error inesperado al crear la operación", "error");
+            console.error(err);
+          }
+        });
+
+        setupModalCloseHandlers("modal-trade", closeModalTrade);
+      });
+    </script>
   </div>
 </ModalDesign>
-
-<script></script>

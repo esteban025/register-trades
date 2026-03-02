@@ -1,0 +1,52 @@
+<div class="">
+  <ul
+    class="flex items-center bg-neutral-800 rounded-full border border-neutral-700 relative"
+  >
+    <li class="relative w-full flex items-center justify-center z-20">
+      <input
+        class="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+        type="radio"
+        name="type"
+        id="type-buy"
+        value="compra"
+        checked
+      />
+      <label for="type-buy" class="w-full p-2 text-center">Compra</label>
+    </li>
+    <li class="relative w-full flex items-center justify-center z-20">
+      <input
+        type="radio"
+        name="type"
+        id="type-sell"
+        value="venta"
+        class="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+      />
+      <label for="type-sell" class="w-full p-2 text-center">Venta</label>
+    </li>
+    <li
+      id="indicator-type"
+      class="absolute w-1/2 h-full left-0 rounded-full transition-transform duration-300"
+      style="background: var(--color-primary);"
+    >
+    </li>
+  </ul>
+</div>
+
+<script>
+  import { $$ } from "@/utils/getElementsDom";
+
+  const typesInputs = $$("input[name='type']") as NodeListOf<HTMLInputElement>;
+  const indicator = document.getElementById("indicator-type");
+
+  typesInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      if (indicator) {
+        if (input.value === "compra") {
+          indicator.style.transform = "translateX(0)";
+        } else {
+          indicator.style.transform = "translateX(100%)";
+        }
+      }
+    });
+  });
+</script>
