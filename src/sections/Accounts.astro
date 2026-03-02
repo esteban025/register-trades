@@ -6,22 +6,34 @@ import { CardsAccounts } from "@/components/CardsAccounts";
 <section class="flex flex-col gap-8">
   <header class="flex items-center justify-between">
     <h2 class="text-2xl font-semibold">Cuentas</h2>
-    <button class="btn btn-primary btn-accounts">
-      <PlusIcon />
-      <span>Cuenta</span>
-    </button>
+    <div class="flex items-center gap-2">
+      <button class="btn btn-secondary btn-actives">
+        <PlusIcon />
+        <span>Activos</span>
+      </button>
+      <button class="btn btn-primary btn-accounts">
+        <PlusIcon />
+        <span>Cuenta</span>
+      </button>
+    </div>
   </header>
   <CardsAccounts client:load />
 </section>
 
 <script>
-  import { isModalAccountOpen } from "@/store";
+  import { isModalAccountOpen, isModalInstrumentOpen } from "@/store";
+  import { $ } from "@/utils/getElementsDom";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const btnOpenModal = document.querySelector(".btn-accounts");
+  document.addEventListener("astro:page-load", () => {
+    const btnOpenModal = $(".btn-accounts") as HTMLButtonElement;
+    const btnOpenModalActives = $(".btn-actives") as HTMLButtonElement;
 
     btnOpenModal?.addEventListener("click", () => {
       isModalAccountOpen.set(true);
+    });
+
+    btnOpenModalActives?.addEventListener("click", () => {
+      isModalInstrumentOpen.set(true);
     });
   });
 </script>

@@ -26,23 +26,37 @@ export const CardsAccounts = () => {
           )}
 
           {accounts.length > 0 && (
-            accounts.map((account: Account) => (
-              <a href={`/accounts/${account.id}`} key={account.id} className="section-design">
-                <div className="relative flex flex-col gap-2">
-                  <header className="flex items-center justify-between">
-                    <h3 className="font-semibold">{account.name}</h3>
-                  </header>
-                  <p className="text-2xl font-semibold text-green-300">
-                    <span className="mr-2">{getCurrencySymbol(account.badge)}</span>
-                    <span>{formatedNumber(account.initial_capital)}</span>
-                  </p>
-                  <div className="absolute top-0 right-0 flex flex-col items-end gap-1">
-                    <p className="text-green-500 bg-green-500/10 p-2 rounded-lg porcentage">⬆ 8%</p>
-                    <p className="text-neutral-500 text-sm">Este mes</p>
+            accounts.map((account: Account) => {
+              const profitDiff = account.net_profit - account.initial_capital;
+              const profitPercentage = ((profitDiff / account.initial_capital) * 100).toFixed(2);
+              const isPositive = profitDiff > 0;
+              const isNegative = profitDiff < 0;
+
+              return (
+                <a href={`/accounts/${account.id}`} key={account.id} className="section-design">
+                  <div className="relative flex flex-col gap-2">
+                    <header className="flex items-center justify-between">
+                      <h3 className="font-semibold">{account.name}</h3>
+                    </header>
+                    <p className={`text-2xl font-semibold ${isPositive ? "text-green-300" : isNegative ? "text-red-300" : "text-neutral-300"}`}>
+                      <span className="mr-2">{getCurrencySymbol(account.badge)}</span>
+                      <span>{formatedNumber(account.net_profit)}</span>
+                    </p>
+                    <div className="absolute top-0 right-0 flex flex-col items-end gap-1">
+                      <p className={`${isPositive ? "text-green-500 bg-green-500/10" :
+                          isNegative ? "text-red-500 bg-red-500/10" :
+                            "text-neutral-500 bg-neutral-500/10"
+                        } p-2 rounded-lg porcentage`}>
+                        {isPositive ? "⬆" : isNegative ? "⬇" : ""} {Math.abs(Number(profitPercentage))}%
+                      </p>
+                      <p className="text-neutral-500 text-sm">
+                        Capital: {getCurrencySymbol(account.badge)}{formatedNumber(account.initial_capital)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </a>
-            ))
+                </a>
+              );
+            })
           )}
         </section>
       )}

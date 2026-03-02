@@ -63,7 +63,7 @@ import ModalDesign from "./ModalDesign.astro";
   import { $id } from "@/utils/getElementsDom";
   import { actions } from "astro:actions";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("astro:page-load", () => {
     const modalAccount = $id("modal-accounts");
     const form = $id("form-accounts") as HTMLFormElement;
 

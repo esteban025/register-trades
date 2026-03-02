@@ -23,6 +23,7 @@ export const accountsLoading = atom(false);
 // Trades store
 export const tradesStore = atom([]);
 export const tradesLoading = atom(false);
+export const currentAccountId = atom(null);
 
 // Helper para mostrar notificación
 export function showNotification(message, type = "info", duration = 4000) {
@@ -84,6 +85,27 @@ export async function refreshTrades() {
     }
   } catch (err) {
     console.error("Error refreshing trades:", err);
+    tradesStore.set([]);
+  } finally {
+    tradesLoading.set(false);
+  }
+}
+
+// Función para refrescar trades por cuenta específica
+export async function refreshTradesByAccount(accountId) {
+  if (!accountId) return;
+  currentAccountId.set(accountId);
+  tradesLoading.set(true);
+  try {
+    const { data, error } = await actions.getTradesByAccount({ account_id: Number(accountId) });
+    if (data?.success && data.data) {
+      tradesStore.set(data.data);
+    } else {
+      console.error("Error fetching trades:", error?.message || data?.message);
+      tradesStore.set([]);
+    }
+  } catch (err) {
+    console.error("Error refreshing trades by account:", err);
     tradesStore.set([]);
   } finally {
     tradesLoading.set(false);

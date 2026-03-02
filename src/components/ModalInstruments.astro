@@ -33,10 +33,10 @@ import ModalDesign from "./ModalDesign.astro";
       <div class="content-btns">
         <button
           type="reset"
-          class="btn btn-secondary"
+          class="btn btn-secondary w-full"
           data-close="modal-instrument">Cancelar</button
         >
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary w-full">Guardar</button>
       </div>
     </form>
   </div>
@@ -52,7 +52,7 @@ import ModalDesign from "./ModalDesign.astro";
   import { $id } from "@/utils/getElementsDom";
   import { actions } from "astro:actions";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("astro:page-load", () => {
     const modalInstrument = $id("modal-instrument");
     const form = $id("form-instrument") as HTMLFormElement;
 

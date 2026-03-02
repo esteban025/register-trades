@@ -1,20 +1,23 @@
 ---
 import TypeTrade from "./formTrade/TypeTrade.astro";
 import ModalDesign from "./ModalDesign.astro";
-import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
+import { InstrumentsForm } from "./formTrade/InstrumentsForm";
+
+const { idAccount } = Astro.props;
 ---
 
 <ModalDesign idModal="modal-trade" titleModal="Registrar operación">
   <div class="" slot="body-modal">
     <form id="form-trade" class="form">
+      <input type="hidden" name="account-id" value={idAccount} />
       <div class="body-form">
         <!-- tipo -->
         <TypeTrade />
-        <AccountsInstrumentsForm client:visible />
+        <InstrumentsForm client:visible />
         <div class="flex items-center gap-4">
           <!-- fecha -->
           <div class="content-input w-full">
-            <input type="date" name="entry-date" id="entry-date" />
+            <input type="date" name="entry-date" id="entry-date" required />
             <label for="entry-date">Fecha de entrada</label>
           </div>
           <!-- lotaje -->
@@ -85,15 +88,14 @@ import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
           ></textarea>
           <label for="comentario">Comentario</label>
         </div>
-
-        <div class="content-btns">
-          <button
-            type="reset"
-            class="btn btn-secondary"
-            data-close="modal-trade">Cancelar</button
-          >
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
+      </div>
+      <div class="content-btns">
+        <button
+          type="reset"
+          class="btn btn-secondary w-full"
+          data-close="modal-trade">Cancelar</button
+        >
+        <button type="submit" class="btn btn-primary w-full">Guardar</button>
       </div>
     </form>
 
@@ -103,11 +105,14 @@ import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
         isModalTradeOpen,
         showNotification,
         refreshTrades,
+        refreshTradesByAccount,
+        refreshAccounts,
+        currentAccountId,
       } from "@/store";
       import { $id } from "@/utils/getElementsDom";
       import { actions } from "astro:actions";
 
-      document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener("astro:page-load", () => {
         const modalTrade = $id("modal-trade");
         const form = $id("form-trade") as HTMLFormElement;
 
@@ -122,6 +127,23 @@ import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
 
         function closeModalTrade() {
           form?.reset();
+
+          // Resetear el indicador de tipo al valor por defecto (compra)
+          const indicator = $id("indicator-type");
+          const typeBuyInput = $id("type-buy") as HTMLInputElement;
+          if (indicator) {
+            indicator.style.transform = "translateX(0)";
+          }
+          if (typeBuyInput) {
+            typeBuyInput.checked = true;
+          }
+
+          // Resetear el select de instrumentos al valor por defecto
+          const instrumentSelect = $id("instrument-id") as HTMLSelectElement;
+          if (instrumentSelect) {
+            instrumentSelect.value = "";
+          }
+
           modalTrade?.classList.remove("is-active");
           modalTrade?.classList.add("hidden");
           isModalTradeOpen.set(false);
@@ -188,6 +210,11 @@ import { AccountsInstrumentsForm } from "./formTrade/AccountsInstrumentsForm";
                 "success",
               );
               await refreshTrades();
+              await refreshAccounts();
+              const accountId = currentAccountId.get();
+              if (accountId) {
+                await refreshTradesByAccount(accountId);
+              }
               closeModalTrade();
             }
           } catch (err) {

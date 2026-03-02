@@ -3,10 +3,32 @@ import type { Account } from "@/types/accounts";
 import { defineAction } from "astro:actions";
 import { z } from "astro:schema";
 
+export const getAccountById = defineAction({
+  input: z.object({
+    id: z.number(),
+  }),
+  async handler({ id }) {
+    const query = `SELECT id, name, initial_capital, net_profit, badge FROM accounts WHERE id = ?`;
+    const [rows] = await db.query(query, [id]);
+    const data = rows as Account[];
+    if (data.length === 0) {
+      return {
+        success: false,
+        message: "Cuenta no encontrada",
+      };
+    }
+    return {
+      success: true,
+      message: "Cuenta obtenida exitosamente",
+      data: data[0],
+    }
+  }
+})
+
 export const getAccounts = defineAction({
   async handler() {
     try {
-      const query = `SELECT id, name, initial_capital, badge FROM accounts`;
+      const query = `SELECT id, name, initial_capital, net_profit, badge FROM accounts`;
       const [rows] = await db.query(query);
       const data = rows as Account[];
       return {
@@ -41,9 +63,9 @@ export const createAccount = defineAction({
       }
     }
 
-    // si no existe, creamos la cuenta
-    const queryInsert = `INSERT INTO accounts (name, initial_capital, badge) VALUES (?, ?, ?)`;
-    await db.query(queryInsert, [name, initial_capital, badge]);
+    // si no existe, creamos la cuenta con net_profit = initial_capital
+    const queryInsert = `INSERT INTO accounts (name, initial_capital, net_profit, badge) VALUES (?, ?, ?, ?)`;
+    await db.query(queryInsert, [name, initial_capital, initial_capital, badge]);
 
     return {
       success: true,

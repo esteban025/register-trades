@@ -2,8 +2,13 @@
 import "../styles/global.css";
 import ModalInstruments from "@/components/ModalInstruments.astro";
 import Notification from "@/assets/Notification.astro";
-import ModalTrades from "@/components/ModalTrades.astro";
 import ModalAccounts from "@/components/ModalAccounts.astro";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+	title: string;
+	description: string;
+}
 const { title, description } = Astro.props;
 ---
 
@@ -16,11 +21,11 @@ const { title, description } = Astro.props;
 		<link rel="icon" href="/favicon.ico" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<ClientRouter />
 	</head>
 	<body class="bg-neutral-950 text-neutral-50 p-4 px-8 relative">
 		<Notification />
 		<ModalInstruments />
-		<ModalTrades />
 		<ModalAccounts />
 		<slot />
 	</body>

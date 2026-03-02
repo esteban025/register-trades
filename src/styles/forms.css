@@ -7,7 +7,7 @@
 
     .content-input {
       position: relative;
-      input, textarea, select{
+      & input, & textarea, & select{
         width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--color-bordes);
@@ -44,6 +44,11 @@
           border-radius: 999px;
           padding: .5rem .25rem;
         }
+
+        option[value=""] {
+          display: none;
+        }
+
       }
 
       /* lienzo de opciones */
@@ -53,6 +58,7 @@
         border: 1px solid var(--color-bordes);
         border-radius: 1rem;
         padding: .5rem;
+        margin: 0.5rem 0;
       }
       label{
         color: var(--color-bordes);
@@ -72,5 +78,24 @@
     gap: 0.75rem;
     padding: 0.75rem;
     border-top: 1px solid var(--color-bordes);
+  }
+}
+
+/* select */
+.form .body-form .content-input select:has(option[value=""]:checked) {
+  color: var(--color-bordes);
+  border-color: var(--color-bordes);
+}
+
+/* date */
+.form .body-form .content-input input[type="date"]:invalid {
+  color: var(--color-bordes);
+  border-color: var(--color-bordes);
+
+  & + label {
+    color: var(--color-bordes);
+    top: 50%;
+    padding: 0;
+    
   }
 }

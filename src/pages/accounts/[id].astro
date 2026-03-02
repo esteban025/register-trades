@@ -1,8 +1,64 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import ModalTrades from "@/components/ModalTrades.astro";
+import { actions } from "astro:actions";
+import { PlusIcon } from "@/assets/icons/icons";
+import { TableTrades } from "@/sections/TableTrades";
 const { id } = Astro.params;
+
+if (!id) {
+  throw new Error("ID de cuenta no proporcionado");
+}
+
+const dataInfo = {
+  name: "",
+  initial_capital: 0,
+  badge: "",
+};
+
+try {
+  const { data, error } = await Astro.callAction(actions.getAccountById, {
+    id: Number(id),
+  });
+  if (data) {
+    dataInfo.name = data.data?.name || "";
+    dataInfo.initial_capital = data.data?.initial_capital || 0;
+    dataInfo.badge = data.data?.badge || "";
+  }
+  if (error) {
+    throw new Error(error.message);
+  }
+} catch (error) {
+  console.error("Error al obtener la cuenta:", error);
+}
 ---
 
-<Layout>
-  <h1>Cuenta {id}</h1>
+<Layout
+  title={`Cuenta ${dataInfo.name || "desconocido"} - Registro de Trades`}
+  description="Aqui podras registrar los trades que pertenezcan a esta cuenta de trading"
+>
+  <ModalTrades idAccount={id} />
+  <header class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-semibold">
+      Cuenta {dataInfo.name || "desconocido"}
+    </h1>
+    <button class="btn btn-primary btn-trade">
+      <PlusIcon />
+      <span>Trade</span>
+    </button>
+  </header>
+  <TableTrades idAccount={id} client:visible />
 </Layout>
+
+<script>
+  import { $ } from "@/utils/getElementsDom";
+  import { isModalTradeOpen, showNotification, refreshTrades } from "@/store";
+
+  document.addEventListener("astro:page-load", () => {
+    const btnTrade = $(".btn-trade") as HTMLButtonElement;
+
+    btnTrade?.addEventListener("click", () => {
+      isModalTradeOpen.set(true);
+    });
+  });
+</script>

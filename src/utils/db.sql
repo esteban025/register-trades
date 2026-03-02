@@ -15,6 +15,7 @@ CREATE TABLE accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     initial_capital DECIMAL(15, 2) NOT NULL,
+    net_profit DECIMAL(15, 2) DEFAULT 0.00,
     badge VARCHAR(3) DEFAULT 'USD'
 );
 

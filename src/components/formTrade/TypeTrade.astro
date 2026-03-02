@@ -35,18 +35,22 @@
 <script>
   import { $$ } from "@/utils/getElementsDom";
 
-  const typesInputs = $$("input[name='type']") as NodeListOf<HTMLInputElement>;
-  const indicator = document.getElementById("indicator-type");
+  document.addEventListener("astro:page-load", () => {
+    const typesInputs = $$(
+      "input[name='type']",
+    ) as NodeListOf<HTMLInputElement>;
+    const indicator = document.getElementById("indicator-type");
 
-  typesInputs.forEach((input) => {
-    input.addEventListener("change", () => {
-      if (indicator) {
-        if (input.value === "compra") {
-          indicator.style.transform = "translateX(0)";
-        } else {
-          indicator.style.transform = "translateX(100%)";
+    typesInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        if (indicator) {
+          if (input.value === "compra") {
+            indicator.style.transform = "translateX(0)";
+          } else {
+            indicator.style.transform = "translateX(100%)";
+          }
         }
-      }
+      });
     });
   });
 </script>

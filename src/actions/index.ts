@@ -1,12 +1,14 @@
-import { getAccounts, createAccount } from "./accounts";
+import { getAccountById, getAccounts, createAccount } from "./accounts";
 import { getInstruments, createInstrument } from "./instruments";
-import { getTrades, createTrade } from "./trades";
+import { getTrades, createTrade, getTradesByAccount } from "./trades";
 
 export const server = {
   getInstruments,
   createInstrument,
   getAccounts,
   createAccount,
+  getAccountById,
   getTrades,
-  createTrade
+  createTrade,
+  getTradesByAccount
 }
