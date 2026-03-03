@@ -44,11 +44,8 @@ import ModalDesign from "./ModalDesign.astro";
 
 <script>
   import { setupModalCloseHandlers } from "@/scripts/modalClose";
-  import {
-    isModalInstrumentOpen,
-    showNotification,
-    refreshInstruments,
-  } from "@/store";
+  import { showNotification } from "@/scripts/notification";
+  import { isModalInstrumentOpen, refreshInstruments } from "@/store";
   import { $id } from "@/utils/getElementsDom";
   import { actions } from "astro:actions";
 
