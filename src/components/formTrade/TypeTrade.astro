@@ -4,7 +4,7 @@
   >
     <li class="relative w-full flex items-center justify-center z-20">
       <input
-        class="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+        class="absolute inset-0 w-full h-full cursor-pointer opacity-0 type-trade"
         type="radio"
         name="type"
         id="type-buy"
@@ -19,7 +19,7 @@
         name="type"
         id="type-sell"
         value="venta"
-        class="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+        class="absolute inset-0 w-full h-full cursor-pointer opacity-0 type-trade"
       />
       <label for="type-sell" class="w-full p-2 text-center">Venta</label>
     </li>
@@ -33,24 +33,30 @@
 </div>
 
 <script>
-  import { $$ } from "@/utils/getElementsDom";
+  import { $$, $id } from "@/utils/getElementsDom";
 
   document.addEventListener("astro:page-load", () => {
-    const typesInputs = $$(
-      "input[name='type']",
-    ) as NodeListOf<HTMLInputElement>;
-    const indicator = document.getElementById("indicator-type");
+    function updateIndicator() {
+      const typesInputs = $$(".type-trade") as NodeListOf<HTMLInputElement>;
+      const indicator = $id("indicator-type");
 
+      if (!typesInputs || !indicator) return;
+      const inputsTypes = Array.from(typesInputs);
+      const activeIndex = inputsTypes.findIndex((input) => input.checked);
+
+      if (activeIndex !== -1) {
+        indicator.style.transform = `translateX(${activeIndex * 100}%)`;
+      }
+    }
+
+    const typesInputs = $$(".type-trade") as NodeListOf<HTMLInputElement>;
     typesInputs.forEach((input) => {
       input.addEventListener("change", () => {
-        if (indicator) {
-          if (input.value === "compra") {
-            indicator.style.transform = "translateX(0)";
-          } else {
-            indicator.style.transform = "translateX(100%)";
-          }
-        }
+        updateIndicator();
       });
     });
+
+    (window as any).updateIndicator = updateIndicator;
+    updateIndicator();
   });
 </script>

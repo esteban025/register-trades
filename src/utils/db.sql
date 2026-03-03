@@ -31,31 +31,16 @@ CREATE TABLE trades (
     exit_price DECIMAL(15, 2) NOT NULL,
     swap DECIMAL(10, 2) DEFAULT 0.00,
     rollover DECIMAL(10, 2) DEFAULT 0.00,
+    gross_profit DECIMAL(15, 2) DEFAULT 0.00,
+    net_profit DECIMAL(15, 2) DEFAULT 0.00,
     comentario TEXT,
     FOREIGN KEY (accounts_id) REFERENCES accounts(id),
     FOREIGN KEY (instruments_id) REFERENCES instruments(id)
 );
 
--- 5. VISTA PARA CÁLCULO DE BENEFICIOS Y SALDO ACTUAL
--- Esta vista automatiza la lógica de Compra/Venta y suma el capital inicial
-CREATE VIEW trading_report AS
-SELECT 
-    t.id,
-    t.date,
-    i.name AS instrument,
-    t.type,
-    -- Cálculo Beneficio Bruto
-    CASE 
-        WHEN t.type = 'venta' THEN (t.entry_price - t.exit_price) * i.pip_value
-        ELSE (t.exit_price - t.entry_price) * i.pip_value
-    END AS gross_profit,
-    -- Cálculo Beneficio Neto (Bruto - Swap - Rollover)
-    (CASE 
-        WHEN t.type = 'venta' THEN (t.entry_price - t.exit_price) * i.pip_value
-        ELSE (t.exit_price - t.entry_price) * i.pip_value
-    END) - t.swap - t.rollover AS net_profit,
-    a.initial_capital,
-    a.name AS account_name
-FROM trades t
-JOIN instruments i ON t.instruments_id = i.id
-JOIN accounts a ON t.accounts_id = a.id;
+-- INSERATAMOS ACTIVOS 
+INSERT INTO instruments (name, pip_value) VALUES 
+('XAUUSD', 1),
+('US30', 0.05),
+('US100', 0.2),
+('SILVER', 50);

@@ -38,14 +38,14 @@ export const CardsAccounts = () => {
                     <header className="flex items-center justify-between">
                       <h3 className="font-semibold">{account.name}</h3>
                     </header>
-                    <p className={`text-2xl font-semibold ${isPositive ? "text-green-300" : isNegative ? "text-red-300" : "text-neutral-300"}`}>
+                    <p className={`text-2xl font-semibold ${isPositive ? "text-green-300" : isNegative ? "text-red-300" : "text-green-300"}`}>
                       <span className="mr-2">{getCurrencySymbol(account.badge)}</span>
                       <span>{formatedNumber(account.net_profit)}</span>
                     </p>
                     <div className="absolute top-0 right-0 flex flex-col items-end gap-1">
                       <p className={`${isPositive ? "text-green-500 bg-green-500/10" :
-                          isNegative ? "text-red-500 bg-red-500/10" :
-                            "text-neutral-500 bg-neutral-500/10"
+                        isNegative ? "text-red-500 bg-red-500/10" :
+                          "text-neutral-500 bg-neutral-500/10"
                         } p-2 rounded-lg porcentage`}>
                         {isPositive ? "⬆" : isNegative ? "⬇" : ""} {Math.abs(Number(profitPercentage))}%
                       </p>

@@ -4,13 +4,8 @@ import { actions } from "astro:actions";
 export const isModalInstrumentOpen = atom(false);
 export const isModalTradeOpen = atom(false);
 export const isModalAccountOpen = atom(false);
-
-// Notification store con mensaje, tipo y estado
-export const notificationStore = atom({
-  isVisible: false,
-  message: "",
-  type: "info", // "success" | "error" | "info"
-});
+export const tradeToEdit = atom(null);
+export const selectedInstrumentId = atom(null);
 
 // Instruments store
 export const instrumentsStore = atom([]);

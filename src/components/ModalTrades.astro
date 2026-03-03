@@ -9,7 +9,13 @@ const { idAccount } = Astro.props;
 <ModalDesign idModal="modal-trade" titleModal="Registrar operación">
   <div class="" slot="body-modal">
     <form id="form-trade" class="form">
-      <input type="hidden" name="account-id" value={idAccount} />
+      <input type="hidden" name="id-trade" id="id-trade" value="" />
+      <input
+        type="hidden"
+        name="account-id"
+        value={idAccount}
+        id="account-id"
+      />
       <div class="body-form">
         <!-- tipo -->
         <TypeTrade />
@@ -108,8 +114,11 @@ const { idAccount } = Astro.props;
         refreshTradesByAccount,
         refreshAccounts,
         currentAccountId,
+        tradeToEdit,
+        selectedInstrumentId,
       } from "@/store";
-      import { $id } from "@/utils/getElementsDom";
+      import { $id, $$ } from "@/utils/getElementsDom";
+      import type { Trade } from "@/types/trades";
       import { actions } from "astro:actions";
 
       document.addEventListener("astro:page-load", () => {
@@ -120,6 +129,43 @@ const { idAccount } = Astro.props;
           if (isOpen) {
             modalTrade?.classList.add("is-active");
             modalTrade?.classList.remove("hidden");
+
+            // Si hay un trade para editar, llenar los campos
+            const trade = tradeToEdit.get() as Trade | null;
+            if (trade == null) return;
+
+            const {
+              id,
+              instruments_id,
+              date,
+              type,
+              lotage,
+              entry_price,
+              exit_price,
+              swap,
+              rollover,
+              comentario,
+            } = trade;
+
+            ($id("id-trade") as HTMLInputElement).value = id.toString();
+            ($$(".type-trade") as NodeListOf<HTMLInputElement>).forEach(
+              (input) => {
+                input.checked = input.value === type;
+              },
+            );
+            ($id("entry-date") as HTMLInputElement).value = new Date(date)
+              .toISOString()
+              .split("T")[0];
+            ($id("lotage") as HTMLInputElement).value = lotage.toString();
+            ($id("entry-price") as HTMLInputElement).value =
+              entry_price.toString();
+            ($id("exit-price") as HTMLInputElement).value =
+              exit_price.toString();
+            ($id("swap") as HTMLInputElement).value = swap.toString();
+            ($id("rollover") as HTMLInputElement).value = rollover.toString();
+            ($id("comentario") as HTMLTextAreaElement).value = comentario || "";
+            (selectedInstrumentId as any).set(instruments_id);
+            (window as any).updateIndicator();
           } else {
             closeModalTrade();
           }
@@ -127,22 +173,11 @@ const { idAccount } = Astro.props;
 
         function closeModalTrade() {
           form?.reset();
+          (tradeToEdit as any).set(null);
+          (selectedInstrumentId as any).set(null);
 
           // Resetear el indicador de tipo al valor por defecto (compra)
-          const indicator = $id("indicator-type");
-          const typeBuyInput = $id("type-buy") as HTMLInputElement;
-          if (indicator) {
-            indicator.style.transform = "translateX(0)";
-          }
-          if (typeBuyInput) {
-            typeBuyInput.checked = true;
-          }
-
-          // Resetear el select de instrumentos al valor por defecto
-          const instrumentSelect = $id("instrument-id") as HTMLSelectElement;
-          if (instrumentSelect) {
-            instrumentSelect.value = "";
-          }
+          (window as any).updateIndicator();
 
           modalTrade?.classList.remove("is-active");
           modalTrade?.classList.add("hidden");
@@ -154,6 +189,7 @@ const { idAccount } = Astro.props;
           e.preventDefault();
           const formData = new FormData(form);
 
+          const id_trade = formData.get("id-trade") as string;
           const account_id = parseInt(formData.get("account-id") as string);
           const instrument_id = parseInt(
             formData.get("instrument-id") as string,
@@ -183,19 +219,35 @@ const { idAccount } = Astro.props;
             return;
           }
 
+          const dataInfo = id_trade
+            ? {
+                id: parseInt(id_trade),
+                account_id,
+                instrument_id,
+                date,
+                type,
+                lotage,
+                entry_price,
+                exit_price,
+                swap,
+                rollover,
+                comentario,
+              }
+            : {
+                account_id,
+                instrument_id,
+                date,
+                type,
+                lotage,
+                entry_price,
+                exit_price,
+                swap,
+                rollover,
+                comentario,
+              };
+
           try {
-            const { data, error } = await actions.createTrade({
-              account_id,
-              instrument_id,
-              date,
-              type,
-              lotage,
-              entry_price,
-              exit_price,
-              swap,
-              rollover,
-              comentario,
-            });
+            const { data, error } = await actions.createTrade(dataInfo);
 
             if (error || !data?.success) {
               showNotification(
