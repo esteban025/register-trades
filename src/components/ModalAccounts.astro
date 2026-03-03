@@ -55,11 +55,8 @@ import ModalDesign from "./ModalDesign.astro";
 
 <script>
   import { setupModalCloseHandlers } from "@/scripts/modalClose";
-  import {
-    isModalAccountOpen,
-    showNotification,
-    refreshAccounts,
-  } from "@/store";
+  import { showNotification } from "@/scripts/notification";
+  import { isModalAccountOpen, refreshAccounts } from "@/store";
   import { $id } from "@/utils/getElementsDom";
   import { actions } from "astro:actions";
 

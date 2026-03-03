@@ -25,15 +25,6 @@ export const tradesStore = atom([]);
 export const tradesLoading = atom(false);
 export const currentAccountId = atom(null);
 
-// Helper para mostrar notificación
-export function showNotification(message, type = "info", duration = 4000) {
-  notificationStore.set({ isVisible: true, message, type });
-
-  setTimeout(() => {
-    notificationStore.set({ isVisible: false, message: "", type: "info" });
-  }, duration);
-}
-
 // Función para refrescar instrumentos
 export async function refreshInstruments() {
   instrumentsLoading.set(true);

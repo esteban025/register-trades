@@ -3,6 +3,7 @@
 @import "./forms.css";
 @import "./sections.css";
 @import "./tables.css";
+@import "./notifications.css";
 
 /* Supports weights 200-800 */
 @import '@fontsource-variable/manrope';

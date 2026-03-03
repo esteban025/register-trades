@@ -101,9 +101,9 @@ const { idAccount } = Astro.props;
 
     <script>
       import { setupModalCloseHandlers } from "@/scripts/modalClose";
+      import { showNotification } from "@/scripts/notification";
       import {
         isModalTradeOpen,
-        showNotification,
         refreshTrades,
         refreshTradesByAccount,
         refreshAccounts,
